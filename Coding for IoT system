@@ -1,0 +1,42 @@
+Code for IoT system 
+
+#include <SoftwareSerial.h>
+#include <IRremote.h>
+   #include <IRremote.h>
+
+int RECV_PIN =  7;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+const int  MOTOR=5;   //Motor on Digital Pin 5
+
+void setup()
+{
+  Serial.begin(9600);
+  irrecv.enableIRIn(); // Start the receiver 
+    Serial.println(results.value, HEX);
+    irrecv.resume(); // Receive the next value
+  
+  pinMode(MOTOR,OUTPUT);
+}
+    
+void loop()
+{
+  if (irrecv.decode(&results)) {
+    Serial.println(results.value, HEX);
+    irrecv.resume(); // Receive the next value
+    
+  for (int i=0;   i<256;   i++)
+{
+  analogWrite(MOTOR,i);
+  delay(10); 
+}
+ delay(2000);
+ for  (int i=255;  i>=0;  i--)
+ {
+   analogWrite(MOTOR, i);
+   delay(10);
+ }
+ delay(2000);
+}
+}
+
