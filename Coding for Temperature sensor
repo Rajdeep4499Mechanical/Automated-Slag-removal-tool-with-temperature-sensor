@@ -1,0 +1,116 @@
+Code for Temperature alarm sensor
+#include <LiquidCrystal.h>
+
+// initialize the library with the numbers of the interface pins  
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+int tmp = A0;
+int baselineTemp = 0;
+int celsius = 0;
+int fahrenheit = 0;
+
+void setup()
+{
+lcd.begin(16, 2);  
+  pinMode(tmp, INPUT);
+pinMode(A0, INPUT);
+  Serial.begin(9600);
+
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(7, OUTPUT);
+}
+ 
+
+void loop()
+{
+baselineTemp = 5;
+  
+  celsius = map(((analogRead(A0) - 20) * 3.04), 0, 1023, -40, 125);
+  
+   fahrenheit = ((celsius * 9) / 5 + 32);
+  Serial.print(celsius);
+  Serial.print(" C, ");
+  Serial.print(fahrenheit);
+  Serial.println(" F");
+  
+   if (celsius < baselineTemp) 
+   {
+    digitalWrite(8, LOW);
+    digitalWrite(9, LOW);
+    digitalWrite(10, HIGH);
+     tone(7, 220);
+    
+  }
+  if (celsius >= baselineTemp && celsius < baselineTemp + 35) 
+  {
+    digitalWrite(8, HIGH);
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+  }
+  
+  if (celsius >= baselineTemp + 35 && celsius < baselineTemp + 45) 
+ 
+  {
+    digitalWrite(9, HIGH);
+     delay(1000);
+    digitalWrite(9, LOW);
+    digitalWrite(8, LOW);
+    digitalWrite(10, LOW);
+    tone(7, 220, 100);
+    delay(500);
+  }
+  
+  if (celsius >= baselineTemp + 45) 
+  {
+    digitalWrite(8, LOW);
+    digitalWrite(9, LOW);
+    digitalWrite(10, HIGH);
+    tone(7, 220);
+   }
+  
+  
+    lcd.clear();
+int reading = analogRead(tmp);  
+  float voltage = reading * 5.0;  
+  voltage /= 1024.0;
+  float temperatureC = (voltage - 0.5) * 100 ;
+
+  if (celsius < baselineTemp) 
+  {
+  lcd.print("DANGER ZONE"); 
+  lcd.setCursor(0,1);  
+  lcd.print(temperatureC);  
+  lcd.println(" degrees C ");  
+  delay(1000);
+  }
+  
+  if (celsius >= baselineTemp && celsius < baselineTemp + 35) 
+  {
+  lcd.print("SAFE ZONE"); 
+  lcd.setCursor(0,1);  
+  lcd.print(temperatureC);  
+  lcd.println(" degrees C ");  
+  delay(1000);
+  }
+  
+  if (celsius >= baselineTemp + 35 && celsius < baselineTemp + 45) 
+  {
+  lcd.print("CAUTION ZONE"); 
+  lcd.setCursor(0,1);  
+  lcd.print(temperatureC);  
+  lcd.println(" degrees C ");  
+  delay(1000);
+  }
+  
+  if (celsius >= baselineTemp + 45)
+  {
+  lcd.print("DANGER ZONE"); 
+  lcd.setCursor(0,1);  
+  lcd.print(temperatureC);  
+  lcd.println(" degrees C ");  
+  delay(1000);
+  }
+}
+
+
